@@ -1,13 +1,12 @@
-name: Build Windows EXE
+name: Build Apps
 
 on:
   push:
     branches: [main]
 
 jobs:
-  build:
+  build-windows:
     runs-on: windows-latest
-
     steps:
       - uses: actions/checkout@v4
 
@@ -27,3 +26,31 @@ jobs:
         with:
           name: Drop-to-JPG-Windows
           path: dist/Drop-to-JPG.exe
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pillow pymupdf tkinterdnd2 pyinstaller
+
+      - name: Build APP
+        run: |
+          pyinstaller --windowed --name "Drop-to-JPG" \
+            --collect-all tkinterdnd2 \
+            converter.py
+
+      - name: Zip APP bundle
+        run: zip -r dist/Drop-to-JPG-Mac.zip dist/Drop-to-JPG.app
+
+      - name: Upload APP
+        uses: actions/upload-artifact@v4
+        with:
+          name: Drop-to-JPG-Mac
+          path: dist/Drop-to-JPG-Mac.zip
