@@ -38,19 +38,32 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install pillow pymupdf tkinterdnd2 pyinstaller
+        run: pip install pillow pymupdf tkinterdnd2 py2app
+
+      - name: Create setup.py
+        run: |
+          cat > setup.py << 'EOF'
+          from setuptools import setup
+          APP = ['converter.py']
+          OPTIONS = {
+              'packages': ['PIL', 'fitz', 'tkinterdnd2'],
+              'iconfile': None,
+              'plist': {
+                  'CFBundleName': 'Drop-to-JPG',
+                  'CFBundleDisplayName': 'Drop-to-JPG',
+              },
+          }
+          setup(app=APP, options={'py2app': OPTIONS})
+          EOF
 
       - name: Build APP
-        run: |
-          pyinstaller --windowed --name "Drop-to-JPG" \
-            --collect-all tkinterdnd2 \
-            converter.py
+        run: python setup.py py2app
 
       - name: Zip APP bundle
-        run: zip -r dist/Drop-to-JPG-Mac.zip dist/Drop-to-JPG.app
+        run: zip -r Drop-to-JPG-Mac.zip dist/Drop-to-JPG.app
 
       - name: Upload APP
         uses: actions/upload-artifact@v4
         with:
           name: Drop-to-JPG-Mac
-          path: dist/Drop-to-JPG-Mac.zip
+          path: Drop-to-JPG-Mac.zip
