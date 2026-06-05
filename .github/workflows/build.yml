@@ -52,13 +52,13 @@ jobs:
 
       - name: Build APP
         run: |
-          pyinstaller --onefile --name "Drop-to-JPG" \
+          pyinstaller --windowed --name "Drop-to-JPG" \
             --add-data "converter.py:." \
             --exclude-module tkinterdnd2 \
             launcher.py
 
       - name: Zip APP
-        run: zip -r Drop-to-JPG-Mac.zip dist/Drop-to-JPG
+        run: zip -r Drop-to-JPG-Mac.zip "dist/Drop-to-JPG.app"
 
       - name: Upload APP
         uses: actions/upload-artifact@v4
