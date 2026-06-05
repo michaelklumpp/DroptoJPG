@@ -630,14 +630,14 @@ class App:
 # ── Entry point ────────────────────────────────────────────────────────────────
 
 def main():
-    if TkinterDnD is not None:
-        root = TkinterDnD.Tk()
-    else:
+    try:
+        if TkinterDnD is not None:
+            root = TkinterDnD.Tk()
+        else:
+            raise ImportError
+    except Exception:
+        import tkinter as tk
         root = tk.Tk()
-        print("Warning: tkinterdnd2 not installed — drag-and-drop disabled.")
+        print("Warning: drag-and-drop unavailable, using browse mode only.")
     App(root)
     root.mainloop()
-
-
-if __name__ == "__main__":
-    main()
